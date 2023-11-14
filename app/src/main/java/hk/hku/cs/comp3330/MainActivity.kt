@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         val calendar_fragment = CalendarFragment()
         val moodle_fragement = MoodleFragment()
         val portal_fragment = PortalFragment()
+        val chatGpt_Fragment = ChatGptFragment()
 
         // Test
         //val cacheFile: File = File(cacheDir, "password")
@@ -43,7 +44,11 @@ class MainActivity : AppCompatActivity() {
                     ft.replace(R.id.frameFragment, portal_fragment)
                     ft.commit()
                 }
-
+                R.id.chatgpt_button -> {
+                    val ft = getSupportFragmentManager().beginTransaction()
+                    ft.replace(R.id.frameFragment, chatGpt_Fragment)
+                    ft.commit()
+                }
             }
             true
         }
