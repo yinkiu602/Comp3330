@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MoodleFragment">
+    tools:context=".PortalFragment">
 
     <WebView
-        android:id="@+id/moodle_webview"
+        android:id="@+id/portal_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 </FrameLayout>
