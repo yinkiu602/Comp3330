@@ -17,7 +17,8 @@
         android:id="@+id/portal_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Portal" />
+        android:title="Portal"
+        android:icon="@drawable/portal_icon_foreground"/>
     <item
         android:id="@+id/moodle_button"
         android:layout_width="wrap_content"
