@@ -7,6 +7,9 @@ android {
     namespace = "hk.hku.cs.comp3330"
     compileSdk = 34
 
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
+    }
     defaultConfig {
         applicationId = "hk.hku.cs.comp3330"
         minSdk = 28
