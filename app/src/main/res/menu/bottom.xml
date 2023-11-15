@@ -28,6 +28,6 @@
         android:id="@+id/chatgpt_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Item" />
+        android:title="ChatGPT" />
 
 </menu>

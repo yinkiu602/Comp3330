@@ -1,8 +1,13 @@
 package hk.hku.cs.comp3330
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.io.File
@@ -20,12 +25,33 @@ class MainActivity : AppCompatActivity() {
         val chatGpt_Fragment = ChatGptFragment()
 
         // Test
-        //val cacheFile: File = File(cacheDir, "password")
-        //if (!cacheFile.exists()) {
-        //    File.createTempFile("password", null, cacheDir)
-        //    val cacheFile: File = File(cacheDir, "password")
-        //    cacheFile.writeText("")
-        //}
+        val cacheFile: File = File(cacheDir, "password")
+        if (!cacheFile.exists()) {
+            val dialog_builder = AlertDialog.Builder(this).setMessage("Please input your HKU credentials below")
+            val dialog_layout = LinearLayout(this)
+            dialog_layout.orientation = LinearLayout.VERTICAL
+            val user_name = EditText(this)
+            val password = EditText(this)
+            user_name.hint = "Username"
+            password.hint = "Password"
+            password.transformationMethod = PasswordTransformationMethod()
+            dialog_layout.addView(user_name)
+            dialog_layout.addView(password)
+            dialog_builder.setView(dialog_layout)
+            dialog_builder.setPositiveButton("OK", {dialog: DialogInterface, which: Int ->
+                File.createTempFile("username", null, cacheDir)
+                File.createTempFile("password", null, cacheDir)
+                var cacheFile: File = File(cacheDir, "username")
+                cacheFile.writeText(user_name.text.toString())
+                cacheFile = File(cacheDir, "password")
+                cacheFile.writeText(password.text.toString())
+            })
+            dialog_builder.show()
+
+            //File.createTempFile("password", null, cacheDir)
+            //val cacheFile: File = File(cacheDir, "password")
+            //cacheFile.writeText("")
+        }
 
         bottomnav.setOnItemSelectedListener { item ->
             when (item.itemId) {
