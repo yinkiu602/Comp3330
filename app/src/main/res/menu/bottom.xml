@@ -18,16 +18,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="Portal"
-        android:icon="@drawable/portal_icon_foreground"/>
+        android:icon="@drawable/portal_icon_foreground" />
     <item
         android:id="@+id/moodle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="Moodle" />
+        android:title="Moodle"
+        android:icon="@drawable/ic_action_moodle" />
     <item
         android:id="@+id/chatgpt_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:title="ChatGPT" />
+        android:title="ChatGPT"
+        android:icon="@drawable/ic_action_chatgpt"/>
 
 </menu>
