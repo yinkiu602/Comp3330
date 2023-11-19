@@ -24,6 +24,9 @@ class MainActivity : AppCompatActivity() {
         val portal_fragment = PortalFragment()
         val chatGpt_Fragment = ChatGptFragment()
 
+
+
+
         // Test
         val cacheFile: File = File(cacheDir, "password")
         if (!cacheFile.exists()) {
@@ -83,5 +86,6 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
     }
 }
