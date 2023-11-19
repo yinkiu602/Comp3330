@@ -1,29 +1,25 @@
 package hk.hku.cs.comp3330;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ValueCallback;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class PortalFragment extends Fragment {
+    private Button button_test;
     WebView webView;
     Boolean loaded = false;
     private String readFile(File input_file) {
@@ -33,6 +29,14 @@ public class PortalFragment extends Fragment {
             output = IOUtils.toString(inputStream, "UTF-8");
         } catch (Exception e) {}
         return output;
+    }
+
+    private void setTopbar(Boolean flag) {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
     }
 
     private void startWebView() {
@@ -51,9 +55,6 @@ public class PortalFragment extends Fragment {
                 if (!loaded) {
                     loaded = true;
                     webView.loadUrl(javascript);
-                    //webView.loadUrl("https://sis-main.hku.hk/psc/sisprod/EMPLOYEE/PSFT_CS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?pslnkid=Z_HC_SSR_SSENRL_CART_LNK&FolderPath=PORTAL_ROOT_OBJECT.Z_SIS_MENU.Z_ENROLLMENT.Z_HC_SSR_SSENRL_CART_LNK&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL%3fpslnkid%3dZ_HC_SSR_SSENRL_CART_LNK&PortalContentURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL%3fpslnkid%3dZ_HC_SSR_SSENRL_CART_LNK&PortalContentProvider=PSFT_CS&PortalCRefLabel=Enrollment%20Add%20Classes&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsp%2fptlprod%2f&PortalURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsc%2fptlprod%2f&PortalHostNode=EMPL&NoCrumbs=yes&PortalKeyStruct=yes");
-                }
-                if (url.equals("https://sis-eportal.hku.hk/psc/ptlprod/EMPLOYEE/EMPL/c/NUI_FRAMEWORK.PT_LANDINGPAGE.GBL?")) {
                     webView.loadUrl("https://sis-main.hku.hk/psc/sisprod/EMPLOYEE/PSFT_CS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?pslnkid=Z_HC_SSR_SSENRL_CART_LNK&FolderPath=PORTAL_ROOT_OBJECT.Z_SIS_MENU.Z_ENROLLMENT.Z_HC_SSR_SSENRL_CART_LNK&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL%3fpslnkid%3dZ_HC_SSR_SSENRL_CART_LNK&PortalContentURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL%3fpslnkid%3dZ_HC_SSR_SSENRL_CART_LNK&PortalContentProvider=PSFT_CS&PortalCRefLabel=Enrollment%20Add%20Classes&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsp%2fptlprod%2f&PortalURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsc%2fptlprod%2f&PortalHostNode=EMPL&NoCrumbs=yes&PortalKeyStruct=yes");
                 }
             }
@@ -64,6 +65,76 @@ public class PortalFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_portal, container, false);
         webView = view.findViewById(R.id.portal_webview);
         startWebView();
+        Toolbar toolbar = view.findViewById(R.id.portal_toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            activity.getSupportActionBar().setDisplayShowHomeEnabled(false);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    activity.getSupportActionBar().setDisplayShowHomeEnabled(false);
+                    webView.setVisibility(View.GONE);
+
+                }
+            });
+        }
+
+
+        ((Button) view.findViewById(R.id.add_class_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://sis-main.hku.hk/psc/sisprod/EMPLOYEE/PSFT_CS/c/SA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL?pslnkid=Z_HC_SSR_SSENRL_CART_LNK&FolderPath=PORTAL_ROOT_OBJECT.Z_SIS_MENU.Z_ENROLLMENT.Z_HC_SSR_SSENRL_CART_LNK&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL%3fpslnkid%3dZ_HC_SSR_SSENRL_CART_LNK&PortalContentURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSR_SSENRL_CART.GBL%3fpslnkid%3dZ_HC_SSR_SSENRL_CART_LNK&PortalContentProvider=PSFT_CS&PortalCRefLabel=Enrollment%20Add%20Classes&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsp%2fptlprod%2f&PortalURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsc%2fptlprod%2f&PortalHostNode=EMPL&NoCrumbs=yes&PortalKeyStruct=yes");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+        ((Button) view.findViewById(R.id.status_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://sis-main.hku.hk/psc/sisprod/EMPLOYEE/PSFT_CS/c/SA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL?pslnkid=Z_ENROLLMENT_STATUS_LNK&FolderPath=PORTAL_ROOT_OBJECT.Z_SIS_MENU.Z_ENROLLMENT.Z_ENROLLMENT_STATUS_LNK&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL%3fpslnkid%3dZ_ENROLLMENT_STATUS_LNK&PortalContentURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSS_STUDENT_CENTER.GBL%3fpslnkid%3dZ_ENROLLMENT_STATUS_LNK&PortalContentProvider=PSFT_CS&PortalCRefLabel=Enrollment%20Status&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsp%2fptlprod%2f&PortalURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsc%2fptlprod%2f&PortalHostNode=EMPL&NoCrumbs=yes&PortalKeyStruct=yes");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+        ((Button) view.findViewById(R.id.transcript_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://sis-main.hku.hk/psc/sisprod/EMPLOYEE/PSFT_CS/c/Z_SS_MENU.Z_TSRPT_WEB_STDT.GBL?FolderPath=PORTAL_ROOT_OBJECT.Z_SIS_MENU.Z_ACADEMIC_RECORDS.Z_TSRPT_WEB_STDT_GBL&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fZ_SS_MENU.Z_TSRPT_WEB_STDT.GBL&PortalContentURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fZ_SS_MENU.Z_TSRPT_WEB_STDT.GBL&PortalContentProvider=PSFT_CS&PortalCRefLabel=Transcript%20(Student%20Copy)&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsp%2fptlprod%2f&PortalURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsc%2fptlprod%2f&PortalHostNode=EMPL&NoCrumbs=yes&PortalKeyStruct=yes");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+        ((Button) view.findViewById(R.id.invoice_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://sis-main.hku.hk/psc/sisprod/EMPLOYEE/PSFT_CS/c/SA_LEARNER_SERVICES.SSF_SS_CHRGS_DUE.GBL?1&FolderPath=PORTAL_ROOT_OBJECT.Z_SIS_MENU.Z_FINANCIAL_SERVICES.Z_MY_INVOICE&IsFolder=false&IgnoreParamTempl=FolderPath%2cIsFolder&PortalActualURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSF_SS_CHRGS_DUE.GBL%3f1&PortalContentURL=https%3a%2f%2fsis-main.hku.hk%2fpsc%2fsisprod%2fEMPLOYEE%2fPSFT_CS%2fc%2fSA_LEARNER_SERVICES.SSF_SS_CHRGS_DUE.GBL%3f1&PortalContentProvider=PSFT_CS&PortalCRefLabel=My%20Invoice&PortalRegistryName=EMPLOYEE&PortalServletURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsp%2fptlprod%2f&PortalURI=https%3a%2f%2fsis-eportal.hku.hk%2fpsc%2fptlprod%2f&PortalHostNode=EMPL&NoCrumbs=yes&PortalKeyStruct=yes");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+        ((Button) view.findViewById(R.id.uhs_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://www.uhs.hku.hk/");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+        ((Button) view.findViewById(R.id.uhs_booking_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://uhs4.hku.hk:8443/CMS3/webBooking/main");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+        ((Button) view.findViewById(R.id.main_page_button)).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                webView.loadUrl("https://sis-eportal.hku.hk/psp/ptlprod/EMPLOYEE/EMPL/h/?tab=DEFAULT");
+                webView.setVisibility(View.VISIBLE);
+                setTopbar(true);
+            }
+        });
+
+        webView.setVisibility(View.GONE);
         return view;
     }
 }

@@ -1,14 +1,25 @@
 package hk.hku.cs.comp3330;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
+import android.app.DownloadManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.shapesecurity.salvation2.URLs.URI;
 
 import org.apache.commons.io.IOUtils;
 
@@ -44,6 +55,17 @@ public class MoodleFragment extends Fragment {
                 super.onPageFinished(view, url);
                 webView.loadUrl(javascript);
 
+            }
+        });
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                DownloadManager.Request temp = new DownloadManager.Request(Uri.parse(url));
+                String filename = URLUtil.guessFileName(url, null, MimeTypeMap.getFileExtensionFromUrl(url));
+                temp.addRequestHeader("Cookie", CookieManager.getInstance().getCookie(url));
+                temp.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                temp.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                ((DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE)).enqueue(temp);
             }
         });
         return view;

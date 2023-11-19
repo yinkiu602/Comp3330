@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/portal_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
@@ -22,6 +22,49 @@
     <WebView
         android:id="@+id/portal_webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible" />
+        android:layout_height="match_parent" >
+
+    </WebView>
+
+    <Button
+        android:id="@+id/add_class_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enrollment Add Classes" />
+
+    <Button
+        android:id="@+id/status_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enrollment Status" />
+
+    <Button
+        android:id="@+id/transcript_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transcript (Student Copy)" />
+
+    <Button
+        android:id="@+id/invoice_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Invoice" />
+
+    <Button
+        android:id="@+id/uhs_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="University Health Service" />
+
+    <Button
+        android:id="@+id/uhs_booking_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="University Health Service Booking" />
+
+    <Button
+        android:id="@+id/main_page_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open portal mainpage" />
 </LinearLayout>
