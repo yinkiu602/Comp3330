@@ -3,7 +3,7 @@ package hk.hku.cs.comp3330;
 public class Events {
     String EVENT, TIME, MONTH, DATE, YEAR;
 
-    public Events(String EVENT, String TIME, String MONTH, String DATE, String YEAR) {
+    public Events(String EVENT, String TIME, String DATE, String MONTH, String YEAR) {
         this.EVENT = EVENT;
         this.TIME = TIME;
         this.MONTH = MONTH;
