@@ -13,7 +13,7 @@
         android:inputType="textShortMessage"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:id="@+id/events_id"></EditText>
+        android:id="@+id/eventname"></EditText>
     
     <LinearLayout
         android:layout_width="match_parent"
