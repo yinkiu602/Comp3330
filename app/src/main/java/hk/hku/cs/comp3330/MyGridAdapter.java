@@ -70,7 +70,6 @@ public class MyGridAdapter extends ArrayAdapter {
                 arrayList.add(events.get(i).getEVENT());
                 EventNumber.setText(arrayList.size() + "Events");
             }
-            //arrayList.clear();
         }
 
 
