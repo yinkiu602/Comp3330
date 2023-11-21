@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,10 +66,11 @@ public class MyGridAdapter extends ArrayAdapter {
         ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < events.size(); i++) {
             eventCalendar.setTime(ConvertStringToDate(events.get(i).getDATE()));
-            if (DayNo == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH)+1 && displayYear == eventCalendar.get(Calendar.YEAR)) {
+            if (DayNo == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == (eventCalendar.get(Calendar.MONTH)+1) && displayYear == eventCalendar.get(Calendar.YEAR)) {
                 arrayList.add(events.get(i).getEVENT());
                 EventNumber.setText(arrayList.size() + "Events");
             }
+            //arrayList.clear();
         }
 
 
@@ -76,7 +78,7 @@ public class MyGridAdapter extends ArrayAdapter {
     }
 
     private Date ConvertStringToDate(String eventDate) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy MM dd", Locale.ENGLISH);
         Date date = new Date();
         try {
             date = format.parse(eventDate);
