@@ -12,7 +12,7 @@ import org.apache.bcel.generic.DASTORE;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
 
-    private static final String CREATE_EVENTS_TABLE = "create table" + DBStructure.EVENT_TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " + DBStructure.EVENT + "TEXT, " + DBStructure.TIME + "TEXT, " + DBStructure.DATE + "TEXT, " + DBStructure.MONTH + "TEXT, " + DBStructure.YEAR + "TEXT)";
+    private static final String CREATE_EVENTS_TABLE = "CREATE TABLE " + DBStructure.EVENT_TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " + DBStructure.EVENT + " TEXT, " + DBStructure.TIME + " TEXT, " + DBStructure.DATE + " TEXT, " + DBStructure.MONTH + " TEXT, " + DBStructure.YEAR + " TEXT)";
     private static final String DROP_EVENTS_TABLE = "DROP TABLE IF EXISTS " + DBStructure.EVENT_TABLE_NAME;
 
 
@@ -23,7 +23,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_EVENTS_TABLE);
-
     }
 
     @Override
@@ -51,9 +50,9 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         return database.query(DBStructure.EVENT_TABLE_NAME, Projections, Selection, SelectionArgs, null, null, null);
     }
 
-    public Cursor ReadEventsperMonth(String month, String year, SQLiteDatabase database) {
+    public Cursor ReadEventsPerMonth(String month, String year, SQLiteDatabase database) {
         String [] Projections = {DBStructure.EVENT, DBStructure.TIME, DBStructure.DATE, DBStructure.MONTH, DBStructure.YEAR};
-        String Selection = DBStructure.MONTH + "=?" + DBStructure.YEAR + "=?";
+        String Selection = DBStructure.MONTH + "=? and " + DBStructure.YEAR + "=?";
         String [] SelectionArgs = {month, year};
 
         return database.query(DBStructure.EVENT_TABLE_NAME, Projections, Selection, SelectionArgs, null, null, null);
