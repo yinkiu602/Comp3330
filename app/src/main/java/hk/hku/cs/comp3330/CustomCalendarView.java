@@ -163,7 +163,69 @@ public class CustomCalendarView  extends LinearLayout {
 
         });
 
+        onDownloadComplete = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (id.equals(calendar_task)) {
+                    Toast.makeText(context, "Download Completed", Toast.LENGTH_SHORT).show();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String event = "", time, date, month, year;
+                                String[] month_coverter = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "moodle_calendar.ics");
+                                FileReader f_reader = new FileReader(file);
+                                BufferedReader b_reader = new BufferedReader(f_reader);
+                                String file_line = "";
+                                String temp_string;
+                                SimpleDateFormat temp_sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+                                SimpleDateFormat hour_sdf = new SimpleDateFormat("hh:mm a");
+                                while ((file_line = b_reader.readLine()) != null) {
+                                    System.out.println(file_line);
+                                    if (file_line.startsWith("SUMMARY:")) {
+                                        event = file_line.substring(8);
+                                    }
+                                    // Get date of event
+                                    else if (file_line.startsWith("DTEND:")) {
+                                        temp_string = file_line;
+                                        Date date_object = temp_sdf.parse(file_line.substring(6));
+                                        LocalDateTime localDatetime = date_object.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
+                                        year = Integer.toString(localDatetime.getYear());
+                                        month = month_coverter[localDatetime.getMonthValue() - 1];
+                                        date = Integer.toString(localDatetime.getYear()) + " " + Integer.toString(localDatetime.getMonthValue()) + " " + Integer.toString(localDatetime.getDayOfMonth());
+                                        time = hour_sdf.format(date_object);
+                                        if (time.startsWith("12:") && time.endsWith("AM")) {
+                                            time = "00" + time.substring(2);
+                                        }
+                                        DBOpenHelper dbOpenHelper = new DBOpenHelper(context);
+                                        SQLiteDatabase database = dbOpenHelper.getWritableDatabase();
+                                        dbOpenHelper.SaveMoodleEvent(event, time, date, month, year, database);
+                                        dbOpenHelper.close();
+                                    }
+                                }
+                                f_reader.close();
+                                file.delete();
+                                SetUpCalendar();
+                                Toast.makeText(context, "Calendar refreshed", Toast.LENGTH_SHORT).show();
+                                return;
+                            } catch (Exception e) {
+                                System.out.println("HI");
+                            }
+                        }
+                    });
+                }
+            }
+        };
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                FetchMoodleCalendar();
+                return;
+            }
+        });
     }
 
     public CustomCalendarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
