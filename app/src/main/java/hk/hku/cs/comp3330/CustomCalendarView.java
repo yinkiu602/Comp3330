@@ -7,6 +7,7 @@ import android.app.DownloadManager;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -178,6 +179,13 @@ public class CustomCalendarView  extends LinearLayout {
                 builder.setView(showView);
                 alertDialog = builder.create();
                 alertDialog.show();
+
+                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        SetUpCalendar();
+                    }
+                });
 
                 return true;
             }
