@@ -236,7 +236,9 @@ public class CustomCalendarView  extends LinearLayout {
                                     }
                                 }
                                 f_reader.close();
+                                file.delete();
                                 SetUpCalendar();
+                                Toast.makeText(context, "Calendar refreshed", Toast.LENGTH_SHORT).show();
                                 return;
                             } catch (Exception e) {
                                 System.out.println("HI");
