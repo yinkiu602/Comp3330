@@ -154,6 +154,7 @@ public class CustomCalendarView  extends LinearLayout {
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         SetUpCalendar();
+
                     }
                 });
 
