@@ -1,13 +1,28 @@
 package hk.hku.cs.comp3330;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,21 +33,31 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.*;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CustomCalendarView  extends LinearLayout {
+import org.apache.commons.io.IOUtils;
 
+public class CustomCalendarView  extends LinearLayout {
     ImageButton nextBtn, prevBtn;
     TextView currDate;
     GridView gridView;
@@ -50,7 +75,10 @@ public class CustomCalendarView  extends LinearLayout {
     List<Date> dates = new ArrayList<>();
     List<Events> eventsList = new ArrayList<>();
 
-
+    BroadcastReceiver onDownloadComplete;
+    Long calendar_task;
+    String calendar_filename;
+    Handler handler = new Handler();
 
 
     public CustomCalendarView(Context context) {
@@ -126,6 +154,7 @@ public class CustomCalendarView  extends LinearLayout {
                 alertDialog = builder.create();
                 alertDialog.show();
             }
+
         });
 
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -155,7 +184,67 @@ public class CustomCalendarView  extends LinearLayout {
 
         });
 
+        onDownloadComplete = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+                if (id.equals(calendar_task)) {
+                    Toast.makeText(context, "Download Completed", Toast.LENGTH_SHORT).show();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String event = "", time, date, month, year;
+                                String[] month_coverter = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "moodle_calendar.ics");
+                                FileReader f_reader = new FileReader(file);
+                                BufferedReader b_reader = new BufferedReader(f_reader);
+                                String file_line = "";
+                                String temp_string;
+                                SimpleDateFormat temp_sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+                                SimpleDateFormat hour_sdf = new SimpleDateFormat("hh:mm a");
+                                while ((file_line = b_reader.readLine()) != null) {
+                                    System.out.println(file_line);
+                                    if (file_line.startsWith("SUMMARY:")) {
+                                        event = file_line.substring(8);
+                                    }
+                                    // Get date of event
+                                    else if (file_line.startsWith("DTEND:")) {
+                                        temp_string = file_line;
+                                        Date date_object = temp_sdf.parse(file_line.substring(6));
+                                        LocalDateTime localDatetime = date_object.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
+                                        year = Integer.toString(localDatetime.getYear());
+                                        month = month_coverter[localDatetime.getMonthValue() - 1];
+                                        date = Integer.toString(localDatetime.getYear()) + " " + Integer.toString(localDatetime.getMonthValue()) + " " + Integer.toString(localDatetime.getDayOfMonth());
+                                        time = hour_sdf.format(date_object);
+                                        if (time.startsWith("12:") && time.endsWith("AM")) {
+                                            time = "00" + time.substring(2);
+                                        }
+                                        DBOpenHelper dbOpenHelper = new DBOpenHelper(context);
+                                        SQLiteDatabase database = dbOpenHelper.getWritableDatabase();
+                                        dbOpenHelper.SaveMoodleEvent(event, time, date, month, year, database);
+                                        dbOpenHelper.close();
+                                    }
+                                }
+                                f_reader.close();
+                                SetUpCalendar();
+                                return;
+                            } catch (Exception e) {
+                                System.out.println("HI");
+                            }
+                        }
+                    });
+                }
+            }
+        };
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                FetchMoodleCalendar();
+                return;
+            }
+        });
     }
 
     public CustomCalendarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -239,5 +328,50 @@ public class CustomCalendarView  extends LinearLayout {
         }
         cursor.close();
         dbOpenHelper.close();
+    }
+
+    // readFile method for reading saved username & password
+    private String readFile(File input_file) {
+        String output = new String("");
+        try {
+            FileInputStream inputStream = new FileInputStream(input_file);
+            output = IOUtils.toString(inputStream, "UTF-8");
+        } catch (Exception e) {}
+        return output;
+    }
+    private void FetchMoodleCalendar() {
+        WebView webView = new WebView(getContext());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.loadUrl("https://hkuportal.hku.hk/cas/login?service=https%3A%2F%2Fmoodle.hku.hk%2Flogin%2Findex.php%3FauthCAS%3DCAS");
+        String username = readFile(new File(getContext().getCacheDir(), "username"));
+        String password = readFile(new File(getContext().getCacheDir(), "password"));
+        String javascript = String.format("javascript:(function(){document.getElementById('username').value='%s';document.getElementById('password').value='%s';document.getElementById('login_btn').click();})()", username, password);
+        context.registerReceiver(onDownloadComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                webView.loadUrl(javascript);
+                if (url.equals("https://moodle.hku.hk/")) {
+                    webView.loadUrl("https://moodle.hku.hk/calendar/export.php?time=" + Long.toString(System.currentTimeMillis() / 1000));
+                }
+                if (url.contains("calendar/export.php?time=")) {
+                    webView.loadUrl("javascript:(function(){document.querySelector(\"[value= 'all']\").click();document.querySelector(\"[value= 'monthnow']\").click();document.querySelector(\"[name= 'export']\").click();})()");
+                }
+            }
+        });
+
+        webView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                DownloadManager.Request temp = new DownloadManager.Request(Uri.parse(url));
+                calendar_filename = "moodle_calendar.ics";
+                temp.addRequestHeader("Cookie", CookieManager.getInstance().getCookie(url));
+                temp.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, calendar_filename);
+                calendar_task = ((DownloadManager) context.getSystemService(DOWNLOAD_SERVICE)).enqueue(temp);
+            }
+        });
+
     }
 }
