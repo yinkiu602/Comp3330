@@ -3,7 +3,6 @@ package hk.hku.cs.comp3330;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.AttributeSet;
@@ -150,13 +149,6 @@ public class CustomCalendarView  extends LinearLayout {
                 builder.setView(showView);
                 alertDialog = builder.create();
                 alertDialog.show();
-
-                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        SetUpCalendar();
-                    }
-                });
 
                 return true;
             }
