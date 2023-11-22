@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val bottomnav = this.findViewById<BottomNavigationView>(R.id.bottom_menu)
-        val home_fragment = HomeFragment()
+        //val home_fragment = HomeFragment()
         val calendar_fragment = CalendarFragment()
         val moodle_fragement = MoodleFragment()
         val portal_fragment = PortalFragment()
@@ -58,11 +58,6 @@ class MainActivity : AppCompatActivity() {
 
         bottomnav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.home_button -> {
-                    val ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.frameFragment, home_fragment)
-                    ft.commit()
-                }
                 R.id.calendar_button -> {
                     val ft = getSupportFragmentManager().beginTransaction()
                     ft.replace(R.id.frameFragment, calendar_fragment)

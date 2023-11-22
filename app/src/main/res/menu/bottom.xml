@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-        android:id="@+id/home_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:title="Home"
-        android:icon="@drawable/home_icon_foreground" />
+    
     <item
         android:id="@+id/calendar_button"
         android:layout_width="wrap_content"
