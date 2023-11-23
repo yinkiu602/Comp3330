@@ -12,7 +12,7 @@ import org.apache.bcel.generic.DASTORE;
 
 public class DBOpenHelper extends SQLiteOpenHelper {
 
-    private static final String CREATE_EVENTS_TABLE = "CREATE TABLE " + DBStructure.EVENT_TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, " + DBStructure.EVENT + " TEXT, " + DBStructure.TIME + " TEXT, " + DBStructure.DATE + " TEXT, " + DBStructure.MONTH + " TEXT, " + DBStructure.YEAR + " TEXT)";
+    private static final String CREATE_EVENTS_TABLE = "CREATE TABLE " + DBStructure.EVENT_TABLE_NAME + "(ID INTEGER, " + DBStructure.EVENT + " TEXT, " + DBStructure.TIME + " TEXT, " + DBStructure.DATE + " TEXT, " + DBStructure.MONTH + " TEXT, " + DBStructure.YEAR + " TEXT, PRIMARY KEY (Event, Date, Time))";
     private static final String DROP_EVENTS_TABLE = "DROP TABLE IF EXISTS " + DBStructure.EVENT_TABLE_NAME;
 
 
